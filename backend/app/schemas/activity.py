@@ -17,6 +17,7 @@ class ActivityBase(BaseModel):
     registration_closing_date: date
     introductory_paragraph: Optional[str] = None
     status: str = ActivityStatus.DRAFT.value
+    form_schema: Optional[dict] = None
 
 class ActivityCreate(ActivityBase):
     pass

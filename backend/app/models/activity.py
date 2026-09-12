@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, Text, Enum
+from sqlalchemy import Column, Integer, String, Date, Boolean, Text, Enum, JSON
 from app.config.database import Base
 import enum
 
@@ -26,3 +26,4 @@ class Activity(Base):
     registration_closing_date = Column(Date, nullable=False)
     introductory_paragraph = Column(Text, nullable=True)
     status = Column(String, default=ActivityStatus.DRAFT.value)
+    form_schema = Column(JSON, nullable=True)

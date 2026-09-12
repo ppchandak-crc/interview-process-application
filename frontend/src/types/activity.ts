@@ -23,6 +23,7 @@ export interface Activity {
   registration_closing_date: string;
   introductory_paragraph?: string;
   status: ActivityStatus;
+  form_schema?: any;
 }
 
 export type ActivityCreate = Omit<Activity, 'id'>;
