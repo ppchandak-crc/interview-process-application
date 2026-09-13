@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { activityApi, dashboardApi, participantApi } from '../../services/api';
 import type { Activity } from '../../types/activity';
 import {
-  Users, AlertTriangle, CheckCircle2, ShieldCheck, Footprints,
-  UserCheck, Clock, Phone, ChevronDown, TrendingUp, Building2,
+  Users, AlertTriangle, CheckCircle2, ShieldCheck,
+  UserCheck, Phone, ChevronDown, TrendingUp, Building2,
   GraduationCap, BookOpen, Briefcase, ClipboardCheck,
   Download, ExternalLink, FileSpreadsheet
 } from 'lucide-react';

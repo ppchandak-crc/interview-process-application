@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { participantApi, interviewApi } from '../../services/api';
 import {
-  ArrowLeft, AlertTriangle, CheckCircle2, Phone, User, MapPin,
+  ArrowLeft, AlertTriangle, CheckCircle2, Phone, User,
   GraduationCap, Briefcase, Users, Shield, Save, Lock
 } from 'lucide-react';
 

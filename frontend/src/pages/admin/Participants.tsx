@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { participantApi, activityApi } from '../../services/api';
 import type { Activity } from '../../types/activity';
-import { Search, Filter, X, ChevronDown, Download } from 'lucide-react';
+import { Search, Filter, X, ChevronDown } from 'lucide-react';
 
 const Participants = () => {
   const [participants, setParticipants] = useState<any[]>([]);
