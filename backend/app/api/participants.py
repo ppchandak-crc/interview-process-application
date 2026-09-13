@@ -7,7 +7,7 @@ import uuid
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, String
+from sqlalchemy import or_, String, func, text
 from typing import Optional, List
 from app.config.database import get_db
 from app.models.participant import Participant
@@ -140,6 +140,7 @@ def list_participants(
     has_exceptions: Optional[bool] = None,
     final_status: Optional[str] = None,
     exception_type: Optional[str] = None,
+    has_interview: Optional[bool] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
@@ -164,11 +165,32 @@ def list_participants(
     if final_status:
         query = query.filter(Participant.final_status == final_status)
     if has_exceptions is True:
-        query = query.filter(Participant.exceptions != None, Participant.exceptions.cast(String) != "[]", Participant.exceptions.cast(String) != "null")
+        query = query.filter(
+            Participant.exceptions.isnot(None),
+            Participant.exceptions.cast(String) != '[]',
+            Participant.exceptions.cast(String) != 'null',
+            Participant.exceptions.cast(String) != '',
+        )
     if has_exceptions is False:
-        query = query.filter(or_(Participant.exceptions == None, Participant.exceptions.cast(String) == "[]", Participant.exceptions.cast(String) == "null"))
+        query = query.filter(
+            or_(
+                Participant.exceptions.is_(None),
+                Participant.exceptions.cast(String) == '[]',
+                Participant.exceptions.cast(String) == 'null',
+                Participant.exceptions.cast(String) == '',
+            )
+        )
     if exception_type:
         query = query.filter(Participant.exceptions.cast(String).ilike(f"%{exception_type}%"))
+    if has_interview is True:
+        from app.models.interview import Interview
+        interviewed_ids = db.query(Interview.participant_id).subquery()
+        query = query.filter(Participant.id.in_(db.query(Interview.participant_id)))
+    if has_interview is False:
+        from app.models.interview import Interview
+        interviewed_ids = [r[0] for r in db.query(Interview.participant_id).all()]
+        if interviewed_ids:
+            query = query.filter(Participant.id.notin_(interviewed_ids))
 
     # Search across multiple fields
     if search:

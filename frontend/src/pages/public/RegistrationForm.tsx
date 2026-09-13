@@ -283,7 +283,7 @@ const RegistrationForm = () => {
                                   if (val.startsWith('91') && val.length > 10) val = val.slice(2);
                                   if (val.startsWith('0') && val.length > 10) val = val.slice(1);
                                   if (val.length > 10) val = val.slice(0, 10);
-                                  e.target.value = val;
+                                  setValue(field.id, val, { shouldValidate: true, shouldDirty: true });
                                 }
                               } : {})
                             })}

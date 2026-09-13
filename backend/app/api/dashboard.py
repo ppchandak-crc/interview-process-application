@@ -29,7 +29,18 @@ def get_dashboard_stats(activity_id: int, db: Session = Depends(get_db), current
     total = len(participants)
 
     # Registration overview
-    with_exceptions = sum(1 for p in participants if p.exceptions and len(p.exceptions) > 0)
+    def _has_exceptions(p):
+        """Check if a participant has real exceptions (handles JSON edge cases)."""
+        exc = p.exceptions
+        if not exc:
+            return False
+        if isinstance(exc, str):
+            return exc not in ('[]', 'null', '')
+        if isinstance(exc, list):
+            return len(exc) > 0
+        return False
+
+    with_exceptions = sum(1 for p in participants if _has_exceptions(p))
     clear_records = total - with_exceptions
     prev_experience = sum(1 for p in participants if p.prev_experience_crc and p.prev_experience_crc.lower() == "yes")
     fully_available = sum(1 for p in participants if p.availability and p.availability.lower() == "yes")
@@ -39,7 +50,7 @@ def get_dashboard_stats(activity_id: int, db: Session = Depends(get_db), current
     # Exception breakdown
     exception_counts = {}
     for p in participants:
-        if p.exceptions:
+        if _has_exceptions(p) and isinstance(p.exceptions, list):
             for exc in p.exceptions:
                 exception_counts[exc] = exception_counts.get(exc, 0) + 1
     total_exception_instances = sum(exception_counts.values())

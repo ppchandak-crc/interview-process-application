@@ -27,6 +27,7 @@ const Participants = () => {
   const availability = searchParams.get('availability') || '';
   const hasExceptions = searchParams.get('has_exceptions') || '';
   const exceptionType = searchParams.get('exception_type') || '';
+  const hasInterview = searchParams.get('has_interview') || '';
   const finalStatus = searchParams.get('final_status') || '';
 
   useEffect(() => {
@@ -56,6 +57,7 @@ const Participants = () => {
       if (availability) params.availability = availability;
       if (hasExceptions) params.has_exceptions = hasExceptions;
       if (exceptionType) params.exception_type = exceptionType;
+      if (hasInterview) params.has_interview = hasInterview;
       if (finalStatus) params.final_status = finalStatus;
       const data = await participantApi.list(params);
       setParticipants(data);

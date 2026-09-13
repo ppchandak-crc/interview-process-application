@@ -341,8 +341,8 @@ const Dashboard = () => {
           {/* Interview Status */}
           <Section title="Interview Status" icon={ClipboardCheck}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              <StatCard label="Interview Pending" value={ivw.interview_pending} color="amber" filterParams={{ final_status: 'Registered' }} onView={drillDown} onDownload={downloadCSV} isDownloading={downloadingCsv === "Interview Pending"} />
-              <StatCard label="Interview Completed" value={ivw.interview_completed} color="emerald" filterParams={{ final_status: 'Interview Completed' }} onView={drillDown} onDownload={downloadCSV} isDownloading={downloadingCsv === "Interview Completed"} />
+              <StatCard label="Interview Pending" value={ivw.interview_pending} color="amber" filterParams={{ has_interview: 'false' }} onView={drillDown} onDownload={downloadCSV} isDownloading={downloadingCsv === "Interview Pending"} />
+              <StatCard label="Interview Completed" value={ivw.interview_completed} color="emerald" filterParams={{ has_interview: 'true' }} onView={drillDown} onDownload={downloadCSV} isDownloading={downloadingCsv === "Interview Completed"} />
               <StatCard label="Total Registrations" value={ivw.total_registrations} filterParams={{}} onView={drillDown} onDownload={downloadCSV} isDownloading={downloadingCsv === "Total Registrations"} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">

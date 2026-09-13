@@ -50,8 +50,18 @@ def compute_exceptions(
     if not wa_proof or (isinstance(wa_proof, str) and wa_proof.strip() == ""):
         exceptions.append("WhatsApp Proof Missing")
 
+    # Mobile Validation
+    import re
+    indian_mobile_pattern = re.compile(r'^[6-9]\d{9}$')
+    
+    if wa and not indian_mobile_pattern.match(wa.strip()):
+        exceptions.append("Invalid WhatsApp Number")
+
     # Participant and parent mobile same
     parent_mobile = _get(responses, "parent_mobile")
+    if parent_mobile and not indian_mobile_pattern.match(parent_mobile.strip()):
+        exceptions.append("Invalid Parent Mobile Number")
+        
     if wa and parent_mobile and wa.strip() == parent_mobile.strip():
         exceptions.append("Participant & Parent Mobile Same")
 
