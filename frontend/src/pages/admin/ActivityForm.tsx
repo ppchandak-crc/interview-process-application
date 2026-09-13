@@ -33,7 +33,7 @@ const ActivityForm = () => {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const isSuperAdmin = localStorage.getItem('role') === 'SUPER_ADMIN';
+  const isSuperAdmin = localStorage.getItem('role') === 'super_admin';
   
   const { register, handleSubmit, formState: { errors }, reset, control } = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
@@ -80,7 +80,7 @@ const ActivityForm = () => {
     }
   };
 
-  const registrationLink = isEdit ? `http://localhost:5173/register/${id}` : '';
+  const registrationLink = isEdit ? `https://interview-process-application.vercel.app/register/${id}` : '';
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
