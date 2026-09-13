@@ -25,15 +25,41 @@ UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.pat
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
+from app.config.settings import get_settings
+
 def save_upload(file, subfolder: str) -> str:
-    folder = os.path.join(UPLOAD_DIR, subfolder)
-    os.makedirs(folder, exist_ok=True)
+    settings = get_settings()
     ext = os.path.splitext(file.filename)[1] if file.filename else ".bin"
     filename = f"{uuid.uuid4().hex}{ext}"
+    path = f"{subfolder}/{filename}"
+    
+    file_data = file.file.read()
+    
+    if settings.SUPABASE_URL and settings.SUPABASE_KEY:
+        try:
+            from supabase import create_client, Client
+            supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+            
+            # Upload to Supabase 'avatars' bucket
+            supabase.storage.from_("avatars").upload(
+                path=path,
+                file=file_data,
+                file_options={"content-type": file.content_type or "application/octet-stream"}
+            )
+            
+            # Return the public URL so the frontend can load it perfectly
+            return supabase.storage.from_("avatars").get_public_url(path)
+        except Exception as e:
+            print(f"Supabase upload failed: {e}")
+            # Fallback to local disk
+            
+    # Local disk fallback
+    folder = os.path.join(UPLOAD_DIR, subfolder)
+    os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
     with open(filepath, "wb") as f:
-        f.write(file.file.read())
-    return f"{subfolder}/{filename}"
+        f.write(file_data)
+    return path
 
 
 def generate_registration_id(db: Session, activity_id: int) -> str:

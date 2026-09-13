@@ -5,6 +5,7 @@ import { activityApi } from '../../services/api';
 import type { Activity } from '../../types/activity';
 import type { FormSchema } from '../../components/FormBuilder';
 import { Ban, CheckCircle2, Building2, MapPin, AlertTriangle, Loader2 } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 
 const RegistrationForm = () => {
   const { activityId } = useParams<{ activityId: string }>();
@@ -61,14 +62,32 @@ const RegistrationForm = () => {
       for (const [key, value] of Object.entries(data)) {
         if (value instanceof FileList) {
           if (value.length > 0) {
-            formData.append(key, value[0]);
+            const file = value[0];
+            // If it's an image, compress it aggressively
+            if (file.type.startsWith('image/')) {
+              const options = {
+                maxSizeMB: 0.15, // Max 150KB
+                maxWidthOrHeight: 1200,
+                useWebWorker: true
+              };
+              try {
+                const compressedFile = await imageCompression(file, options);
+                formData.append(key, compressedFile, compressedFile.name);
+              } catch (error) {
+                console.error('Compression error:', error);
+                formData.append(key, file); // Fallback to original
+              }
+            } else {
+              formData.append(key, file);
+            }
           }
         } else if (value !== undefined && value !== null) {
           formData.append(key, value.toString());
         }
       }
 
-      const response = await fetch('http://localhost:8000/participants/register', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/participants/register`, {
         method: 'POST',
         body: formData,
       });

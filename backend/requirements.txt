@@ -12,3 +12,4 @@ google-auth-oauthlib
 aiofiles
 psycopg2-binary
 gunicorn
+supabase
