@@ -7,7 +7,7 @@ import uuid
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, String
 from typing import Optional, List
 from app.config.database import get_db
 from app.models.participant import Participant
@@ -167,6 +167,8 @@ def list_participants(
         query = query.filter(Participant.exceptions != None, Participant.exceptions != "[]")
     if has_exceptions is False:
         query = query.filter(or_(Participant.exceptions == None, Participant.exceptions == "[]"))
+    if exception_type:
+        query = query.filter(Participant.exceptions.cast(String).ilike(f"%{exception_type}%"))
 
     # Search across multiple fields
     if search:

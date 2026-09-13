@@ -23,6 +23,7 @@ const Participants = () => {
   const shoes = searchParams.get('safety_shoes') || '';
   const availability = searchParams.get('availability') || '';
   const hasExceptions = searchParams.get('has_exceptions') || '';
+  const exceptionType = searchParams.get('exception_type') || '';
   const finalStatus = searchParams.get('final_status') || '';
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const Participants = () => {
       if (shoes) params.safety_shoes = shoes;
       if (availability) params.availability = availability;
       if (hasExceptions) params.has_exceptions = hasExceptions;
+      if (exceptionType) params.exception_type = exceptionType;
       if (finalStatus) params.final_status = finalStatus;
       const data = await participantApi.list(params);
       setParticipants(data);
