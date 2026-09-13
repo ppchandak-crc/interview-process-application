@@ -1,5 +1,6 @@
-import React from 'react';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Trash2, GripVertical, X, ChevronDown } from 'lucide-react';
+import { mastersApi } from '../services/api';
 
 export type FieldType = 'text' | 'textarea' | 'select' | 'file' | 'date' | 'checkbox';
 export type FieldWidth = 'full' | 'half' | 'third';
@@ -41,6 +42,152 @@ const defaultSchema: FormSchema = {
     }
   ]
 };
+
+// ─── Tag-based Options Editor ─────────────────────────────
+
+interface OptionsEditorProps {
+  options: string[];
+  onChange: (options: string[]) => void;
+}
+
+const OptionsEditor: React.FC<OptionsEditorProps> = ({ options, onChange }) => {
+  const [inputValue, setInputValue] = useState('');
+  const [showMasterMenu, setShowMasterMenu] = useState(false);
+  const [masterData, setMasterData] = useState<{ colleges: string[]; streams: string[]; years: string[] } | null>(null);
+  const [loadingMasters, setLoadingMasters] = useState(false);
+
+  const addOption = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed && !options.includes(trimmed)) {
+      onChange([...options, trimmed]);
+    }
+    setInputValue('');
+  };
+
+  const removeOption = (index: number) => {
+    const next = [...options];
+    next.splice(index, 1);
+    onChange(next);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addOption(inputValue);
+    } else if (e.key === 'Backspace' && inputValue === '' && options.length > 0) {
+      removeOption(options.length - 1);
+    }
+  };
+
+  const loadMasters = async () => {
+    if (masterData) {
+      setShowMasterMenu(!showMasterMenu);
+      return;
+    }
+    setLoadingMasters(true);
+    try {
+      const [colleges, streams, years] = await Promise.all([
+        mastersApi.getColleges(),
+        mastersApi.getStreams(),
+        mastersApi.getYears(),
+      ]);
+      setMasterData({
+        colleges: colleges.filter((c: any) => c.is_active).map((c: any) => c.name),
+        streams: streams.filter((s: any) => s.is_active).map((s: any) => s.name),
+        years: years.filter((y: any) => y.is_active).map((y: any) => y.name),
+      });
+      setShowMasterMenu(true);
+    } catch {
+      // silently fail
+    } finally {
+      setLoadingMasters(false);
+    }
+  };
+
+  const importMasterList = (items: string[]) => {
+    const merged = [...options];
+    items.forEach((item) => {
+      if (!merged.includes(item)) merged.push(item);
+    });
+    onChange(merged);
+    setShowMasterMenu(false);
+  };
+
+  return (
+    <div className="pl-2 space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-slate-500">Dropdown Options</label>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={loadMasters}
+            className="text-xs font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded transition-colors"
+          >
+            {loadingMasters ? 'Loading...' : <>Import from Masters <ChevronDown className="w-3 h-3" /></>}
+          </button>
+          {showMasterMenu && masterData && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowMasterMenu(false)} />
+              <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 w-48 py-1">
+                <button
+                  type="button"
+                  onClick={() => importMasterList(masterData.colleges)}
+                  className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-between"
+                >
+                  Colleges <span className="text-xs text-slate-400">{masterData.colleges.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => importMasterList(masterData.streams)}
+                  className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-between"
+                >
+                  Streams <span className="text-xs text-slate-400">{masterData.streams.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => importMasterList(masterData.years)}
+                  className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-between"
+                >
+                  Education Years <span className="text-xs text-slate-400">{masterData.years.length}</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Tags display */}
+      <div className="min-h-[42px] w-full bg-white border border-slate-300 rounded-md px-2 py-1.5 flex flex-wrap gap-1.5 items-center focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-shadow">
+        {options.filter(Boolean).map((opt, idx) => (
+          <span
+            key={`${opt}-${idx}`}
+            className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs font-medium pl-2.5 pr-1 py-1 rounded-md border border-slate-200 group"
+          >
+            {opt}
+            <button
+              type="button"
+              onClick={() => removeOption(idx)}
+              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full p-0.5 transition-colors"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={options.length === 0 ? 'Type an option and press Enter' : 'Add more...'}
+          className="flex-1 min-w-[100px] text-sm bg-transparent border-none outline-none py-0.5 px-1"
+        />
+      </div>
+      <p className="text-[10px] text-slate-400">Press Enter to add. Backspace to remove last.</p>
+    </div>
+  );
+};
+
+// ─── Form Builder ─────────────────────────────────────────
 
 const FormBuilder: React.FC<FormBuilderProps> = ({ value, onChange }) => {
   const schema = value || defaultSchema;
@@ -168,16 +315,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ value, onChange }) => {
                   </div>
                   
                   {field.type === 'select' && (
-                    <div className="pl-2 space-y-2">
-                      <label className="text-xs font-semibold text-slate-500">Dropdown Options (comma separated)</label>
-                      <input
-                        type="text"
-                        value={field.options?.join(', ') || ''}
-                        onChange={(e) => updateField(sIdx, fIdx, { options: e.target.value.split(',').map(s => s.trimStart()) })}
-                        placeholder="Option 1, Option 2, Option 3"
-                        className="w-full text-sm bg-white border border-slate-300 rounded-md px-3 py-1.5 focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
+                    <OptionsEditor
+                      options={field.options || []}
+                      onChange={(opts) => updateField(sIdx, fIdx, { options: opts })}
+                    />
                   )}
 
                   <div className="flex justify-between items-center pt-2 border-t border-slate-100">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { participantApi, activityApi } from '../../services/api';
+import { participantApi, activityApi, mastersApi } from '../../services/api';
 import type { Activity } from '../../types/activity';
 import { Search, Filter, X, ChevronDown } from 'lucide-react';
 
@@ -9,6 +9,9 @@ const Participants = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [masterColleges, setMasterColleges] = useState<string[]>([]);
+  const [masterStreams, setMasterStreams] = useState<string[]>([]);
+  const [masterYears, setMasterYears] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -28,6 +31,10 @@ const Participants = () => {
 
   useEffect(() => {
     activityApi.getAll().then(setActivities);
+    // Load master data for filter dropdowns
+    mastersApi.getColleges().then((data: any[]) => setMasterColleges(data.filter(c => c.is_active).map(c => c.name)));
+    mastersApi.getStreams().then((data: any[]) => setMasterStreams(data.filter(s => s.is_active).map(s => s.name)));
+    mastersApi.getYears().then((data: any[]) => setMasterYears(data.filter(y => y.is_active).map(y => y.name)));
   }, []);
 
   useEffect(() => {
@@ -159,9 +166,9 @@ const Participants = () => {
         {/* Filter Dropdowns */}
         {showFilters && (
           <div className="p-3 bg-slate-50 border-b border-slate-200 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            <FilterSelect label="College" value={college} onChange={(v) => updateFilter('college', v)} options={['KTHM College', 'BYK College', 'MET', 'RYK College', 'Other']} />
-            <FilterSelect label="Stream" value={stream} onChange={(v) => updateFilter('stream', v)} options={['B.Com', 'M.Com', 'BBA', 'MBA', 'Engineering', 'Other']} />
-            <FilterSelect label="Year" value={year} onChange={(v) => updateFilter('year', v)} options={['FY', 'SY', 'TY', 'Final Year', 'Post Graduate']} />
+            <FilterSelect label="College" value={college} onChange={(v) => updateFilter('college', v)} options={masterColleges} />
+            <FilterSelect label="Stream" value={stream} onChange={(v) => updateFilter('stream', v)} options={masterStreams} />
+            <FilterSelect label="Year" value={year} onChange={(v) => updateFilter('year', v)} options={masterYears} />
             <FilterSelect label="Prev. Experience" value={prevExp} onChange={(v) => updateFilter('prev_experience', v)} options={['Yes', 'No']} />
             <FilterSelect label="Parent Permission" value={parentPerm} onChange={(v) => updateFilter('parent_permission', v)} options={['Yes', 'No']} />
             <FilterSelect label="Safety Shoes" value={shoes} onChange={(v) => updateFilter('safety_shoes', v)} options={['Yes', 'No', 'Already Have']} />
