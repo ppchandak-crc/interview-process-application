@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, GripVertical, X, ChevronDown } from 'lucide-react';
 import { mastersApi } from '../services/api';
 
