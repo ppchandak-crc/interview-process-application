@@ -234,7 +234,7 @@ const RegistrationForm = () => {
                           className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-colors"
                         >
                           <option value="">Select</option>
-                          {field.options?.map(o => (
+                          {field.options?.filter(Boolean).map(o => (
                             <option key={o} value={o}>{o}</option>
                           ))}
                         </select>

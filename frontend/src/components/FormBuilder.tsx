@@ -173,7 +173,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ value, onChange }) => {
                       <input
                         type="text"
                         value={field.options?.join(', ') || ''}
-                        onChange={(e) => updateField(sIdx, fIdx, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                        onChange={(e) => updateField(sIdx, fIdx, { options: e.target.value.split(',').map(s => s.trimStart()) })}
                         placeholder="Option 1, Option 2, Option 3"
                         className="w-full text-sm bg-white border border-slate-300 rounded-md px-3 py-1.5 focus:outline-none focus:border-blue-500"
                       />
