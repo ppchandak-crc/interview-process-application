@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type { Activity, ActivityCreate } from '../types/activity';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = rawApiUrl.replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_URL,

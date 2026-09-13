@@ -24,6 +24,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "https://interview-process-application.vercel.app"
     ]
+    # Allow all Vercel preview URLs (regex)
+    BACKEND_CORS_ORIGIN_REGEX: str = r"https://.*\.vercel\.app"
 
     class Config:
         env_file = ".env"
