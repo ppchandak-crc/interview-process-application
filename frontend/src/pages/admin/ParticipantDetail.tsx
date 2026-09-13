@@ -170,7 +170,7 @@ const ParticipantDetail = () => {
             <div className="flex items-center gap-3">
               <ProfileRow label="Proof" value={r.whatsapp_proof ? 'Uploaded' : 'Not uploaded'} />
               {r.whatsapp_proof && (
-                <a href={`http://localhost:8000/uploads/${r.whatsapp_proof}`} target="_blank" className="text-xs text-indigo-600 hover:underline">View</a>
+                <a href={r.whatsapp_proof.startsWith('http') ? r.whatsapp_proof : `${import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? 'https://interview-process-application.onrender.com' : 'http://localhost:8000')}/uploads/${r.whatsapp_proof}`} target="_blank" className="text-xs text-indigo-600 hover:underline">View</a>
               )}
             </div>
             <div className="flex items-center gap-3 mt-2">
@@ -207,13 +207,13 @@ const ParticipantDetail = () => {
               <ProfileRow label="ID Proof Type" value={r.id_type} />
               <div className="flex items-center gap-2">
                 <ProfileRow label="ID Proof" value={r.id_proof ? 'Uploaded' : 'Not uploaded'} />
-                {r.id_proof && <a href={`http://localhost:8000/uploads/${r.id_proof}`} target="_blank" className="text-xs text-indigo-600 hover:underline">View</a>}
+                {r.id_proof && <a href={r.id_proof.startsWith('http') ? r.id_proof : `${import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? 'https://interview-process-application.onrender.com' : 'http://localhost:8000')}/uploads/${r.id_proof}`} target="_blank" className="text-xs text-indigo-600 hover:underline">View</a>}
               </div>
             </div>
             {r.photo && (
               <div>
                 <span className="text-xs text-slate-500">Photo:</span>
-                <a href={`http://localhost:8000/uploads/${r.photo}`} target="_blank" className="text-xs text-indigo-600 hover:underline ml-2">View Photo</a>
+                <a href={r.photo.startsWith('http') ? r.photo : `${import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? 'https://interview-process-application.onrender.com' : 'http://localhost:8000')}/uploads/${r.photo}`} target="_blank" className="text-xs text-indigo-600 hover:underline ml-2">View Photo</a>
               </div>
             )}
           </ProfileSection>
