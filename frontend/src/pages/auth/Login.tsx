@@ -19,11 +19,9 @@ const Login = () => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const apiBase = import.meta.env.VITE_API_URL
-        ? import.meta.env.VITE_API_URL.replace(/\/+$/, '')
-        : window.location.hostname.includes('vercel.app')
-          ? 'https://interview-process-application.onrender.com'
-          : 'http://localhost:8000';
+      const apiBase = (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app'))
+        ? 'https://interview-process-application.onrender.com'
+        : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : 'http://localhost:8000');
       const response = await fetch(`${apiBase}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
