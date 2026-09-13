@@ -6,9 +6,10 @@ import ActivityForm from './pages/admin/ActivityForm';
 import Login from './pages/auth/Login';
 import RegistrationForm from './pages/public/RegistrationForm';
 import ProtectedRoute from './components/ProtectedRoute';
-
 import Participants from './pages/admin/Participants';
 import ParticipantDetail from './pages/admin/ParticipantDetail';
+import Masters from './pages/admin/Masters';
+import Reports from './pages/admin/Reports';
 
 function App() {
   return (
@@ -30,9 +31,8 @@ function App() {
             <Route path="activities/:id/edit" element={<ActivityForm />} />
             <Route path="participants" element={<Participants />} />
             <Route path="participants/:id" element={<ParticipantDetail />} />
-            <Route path="interviews" element={<div className="p-4">Interviews — Coming soon</div>} />
-            <Route path="reports" element={<div className="p-4">Reports — Coming soon</div>} />
-            <Route path="masters" element={<div className="p-4">Masters — Coming soon</div>} />
+            <Route path="masters" element={<Masters />} />
+            <Route path="reports" element={<Reports />} />
           </Route>
         </Route>
       </Routes>
