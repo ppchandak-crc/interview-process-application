@@ -225,9 +225,13 @@ const UserManager = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
                   </td>
                   {isSuperAdmin && (
                     <td className="px-5 py-3 text-center">
-                      <button onClick={() => toggleActive(u.id, u.is_active)} className={`text-xs font-medium ${u.is_active ? 'text-red-600 hover:underline' : 'text-emerald-600 hover:underline'}`}>
-                        {u.is_active ? 'Deactivate' : 'Activate'}
-                      </button>
+                      {u.user_id === 'superadmin' ? (
+                        <span className="text-xs font-medium text-slate-400 cursor-not-allowed">Primary</span>
+                      ) : (
+                        <button onClick={() => toggleActive(u.id, u.is_active)} className={`text-xs font-medium ${u.is_active ? 'text-red-600 hover:underline' : 'text-emerald-600 hover:underline'}`}>
+                          {u.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>
