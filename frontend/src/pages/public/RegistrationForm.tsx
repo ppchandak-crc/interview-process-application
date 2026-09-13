@@ -254,16 +254,47 @@ const RegistrationForm = () => {
                             file:mr-4 file:py-1.5 file:px-4 file:border-0 file:border-r file:border-slate-300 file:text-sm file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-colors"
                           />
                         </div>
-                      ) : (
-                        <input
-                          type={field.type}
-                          {...register(field.id, { required: field.required ? 'This field is required' : false })}
-                          readOnly={field.id === 'age'}
-                          className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors ${
-                            field.id === 'age' ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-slate-50 focus:bg-white'
-                          }`}
-                        />
-                      )}
+                      ) : (() => {
+                        // Check if this is a phone/mobile/whatsapp field
+                        const isPhoneField = /phone|mobile|whatsapp|contact.*no|contact.*number/i.test(field.id) || 
+                                             /phone|mobile|whatsapp|contact.*no|contact.*number/i.test(field.label);
+                        
+                        const phoneValidation = isPhoneField ? {
+                          pattern: {
+                            value: /^[6-9]\d{9}$/,
+                            message: 'Enter a valid 10-digit Indian mobile number'
+                          },
+                          minLength: { value: 10, message: 'Phone number must be exactly 10 digits' },
+                          maxLength: { value: 10, message: 'Phone number must be exactly 10 digits' },
+                        } : {};
+                        
+                        return (
+                          <input
+                            type={isPhoneField ? 'tel' : field.type}
+                            {...register(field.id, { 
+                              required: field.required ? 'This field is required' : false,
+                              ...phoneValidation,
+                              ...(isPhoneField ? {
+                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                  // Strip non-digits, remove +91 or 0 prefix
+                                  let val = e.target.value.replace(/\D/g, '');
+                                  if (val.startsWith('91') && val.length > 10) val = val.slice(2);
+                                  if (val.startsWith('0') && val.length > 10) val = val.slice(1);
+                                  if (val.length > 10) val = val.slice(0, 10);
+                                  e.target.value = val;
+                                }
+                              } : {})
+                            })}
+                            readOnly={field.id === 'age'}
+                            maxLength={isPhoneField ? 10 : undefined}
+                            placeholder={isPhoneField ? '10-digit mobile number' : undefined}
+                            inputMode={isPhoneField ? 'numeric' : undefined}
+                            className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors ${
+                              field.id === 'age' ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-slate-50 focus:bg-white'
+                            }`}
+                          />
+                        );
+                      })()}
                       {field.helperText && (
                         <p className="text-xs text-slate-400 mt-2">{field.helperText}</p>
                       )}
