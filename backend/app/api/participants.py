@@ -164,9 +164,9 @@ def list_participants(
     if final_status:
         query = query.filter(Participant.final_status == final_status)
     if has_exceptions is True:
-        query = query.filter(Participant.exceptions != None, Participant.exceptions != "[]")
+        query = query.filter(Participant.exceptions != None, Participant.exceptions.cast(String) != "[]", Participant.exceptions.cast(String) != "null")
     if has_exceptions is False:
-        query = query.filter(or_(Participant.exceptions == None, Participant.exceptions == "[]"))
+        query = query.filter(or_(Participant.exceptions == None, Participant.exceptions.cast(String) == "[]", Participant.exceptions.cast(String) == "null"))
     if exception_type:
         query = query.filter(Participant.exceptions.cast(String).ilike(f"%{exception_type}%"))
 
