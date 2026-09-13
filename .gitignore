@@ -1,39 +1,29 @@
-# --- Backend (Python) ---
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Environments
-backend/venv/
-venv/
-env/
+# Environment variables
 .env
-.venv
-
-# Database
-*.db
-*.sqlite3
-backend/interview_system.db
-
-# File uploads (do not commit uploaded ID proofs, photos, etc)
-backend/uploads/
-
-# --- Frontend (Node.js/React) ---
-frontend/node_modules/
-node_modules/
-frontend/dist/
-frontend/dist-ssr/
-frontend/.eslintcache
-frontend/coverage/
-
-# Local env files
 .env.local
 .env.*.local
 
-# --- General IDE / OS ---
+# IDEs and Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 .DS_Store
-Thumbs.db
-*.log
+
+# Backend (Python/FastAPI)
+backend/venv/
+backend/__pycache__/
+backend/.pytest_cache/
+backend/*.db
+backend/uploads/
+*.pyc
+*.pyo
+*.pyd
+
+# Frontend (React/Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*

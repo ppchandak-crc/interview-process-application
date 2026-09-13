@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, CalendarDays, FileText, Settings, UserSquare2, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, FileText, Settings, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 
 const AdminLayout = () => {
@@ -10,11 +10,10 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Activities', path: '/admin/activities', icon: CalendarDays },
     { name: 'Participants', path: '/admin/participants', icon: Users },
-    { name: 'Interviews', path: '/admin/interviews', icon: UserSquare2 },
+    { name: 'Activities', path: '/admin/activities', icon: CalendarDays },
     { name: 'Reports', path: '/admin/reports', icon: FileText },
-    { name: 'Masters', path: '/admin/masters', icon: Settings },
+    { name: 'Masters & Users', path: '/admin/masters', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -29,8 +28,8 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-60 bg-[#1a2332] text-slate-300 flex flex-col shrink-0">
         <div className="px-5 pt-6 pb-4 border-b border-white/10">
-          <h1 className="text-base font-bold text-white tracking-wide">Registration System</h1>
-          <p className="text-xs text-slate-500 mt-1">Admin Portal</p>
+          <h1 className="text-sm font-bold text-white tracking-wide leading-tight">Participant Registration,<br />Interview & Selection</h1>
+          <p className="text-xs text-slate-500 mt-1.5">Admin Portal</p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {navItems.map((item) => {
@@ -56,7 +55,7 @@ const AdminLayout = () => {
         <div className="px-3 py-4 border-t border-white/10">
           <div className="px-3 mb-3">
             <p className="text-xs text-white font-medium truncate">{userName}</p>
-            <p className="text-xs text-slate-500 capitalize">{role.replace('_', ' ').toLowerCase()}</p>
+            <p className="text-xs text-slate-500 capitalize">{role.replace('_', ' ')}</p>
           </div>
           <button
             onClick={handleLogout}

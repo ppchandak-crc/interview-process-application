@@ -1,24 +1,29 @@
 from app.config.database import SessionLocal, Base, engine
 from app.models.user import User
 from app.models.activity import Activity
+from app.models.masters import MasterCollege, MasterStream, MasterEducationYear
 from app.auth.security import get_password_hash
 from datetime import date
 
+# Ensure all models are imported for table creation
+from app.models import participant, interview, audit_log, masters  # noqa: F401
+
 Base.metadata.create_all(bind=engine)
+
 
 def seed():
     db = SessionLocal()
     try:
         # --- Users ---
         users = [
-            {"name": "Super Admin", "user_id": "superadmin", "password": "superadmin123", "role": "SUPER_ADMIN"},
-            {"name": "Admin User", "user_id": "admin", "password": "admin123", "role": "ADMIN"},
-            {"name": "Interviewer 1", "user_id": "interviewer1", "password": "int123", "role": "INTERVIEWER"},
-            {"name": "Interviewer 2", "user_id": "interviewer2", "password": "int123", "role": "INTERVIEWER"},
-            {"name": "Interviewer 3", "user_id": "interviewer3", "password": "int123", "role": "INTERVIEWER"},
-            {"name": "Interviewer 4", "user_id": "interviewer4", "password": "int123", "role": "INTERVIEWER"},
-            {"name": "Interviewer 5", "user_id": "interviewer5", "password": "int123", "role": "INTERVIEWER"},
-            {"name": "Interviewer 6", "user_id": "interviewer6", "password": "int123", "role": "INTERVIEWER"},
+            {"name": "Super Admin", "user_id": "superadmin", "password": "superadmin123", "role": "super_admin"},
+            {"name": "Admin User", "user_id": "admin", "password": "admin123", "role": "admin"},
+            {"name": "Interviewer 1", "user_id": "interviewer1", "password": "int123", "role": "interviewer"},
+            {"name": "Interviewer 2", "user_id": "interviewer2", "password": "int123", "role": "interviewer"},
+            {"name": "Interviewer 3", "user_id": "interviewer3", "password": "int123", "role": "interviewer"},
+            {"name": "Interviewer 4", "user_id": "interviewer4", "password": "int123", "role": "interviewer"},
+            {"name": "Interviewer 5", "user_id": "interviewer5", "password": "int123", "role": "interviewer"},
+            {"name": "Interviewer 6", "user_id": "interviewer6", "password": "int123", "role": "interviewer"},
         ]
 
         for u in users:
@@ -32,6 +37,27 @@ def seed():
                 print(f"  Created user: {u['user_id']} ({u['role']})")
             else:
                 print(f"  User already exists: {u['user_id']}")
+
+        # --- Master Data: Colleges ---
+        colleges = ["KTHM College", "BYK College", "MET", "RYK College", "Other"]
+        for name in colleges:
+            if not db.query(MasterCollege).filter(MasterCollege.name == name).first():
+                db.add(MasterCollege(name=name))
+                print(f"  Created college: {name}")
+
+        # --- Master Data: Streams ---
+        streams = ["B.Com", "M.Com", "BBA", "MBA", "Engineering", "Other"]
+        for name in streams:
+            if not db.query(MasterStream).filter(MasterStream.name == name).first():
+                db.add(MasterStream(name=name))
+                print(f"  Created stream: {name}")
+
+        # --- Master Data: Education Years ---
+        years = ["FY", "SY", "TY", "Final Year", "Post Graduate"]
+        for name in years:
+            if not db.query(MasterEducationYear).filter(MasterEducationYear.name == name).first():
+                db.add(MasterEducationYear(name=name))
+                print(f"  Created year: {name}")
 
         # --- Demo Activity ---
         if not db.query(Activity).first():
@@ -102,7 +128,7 @@ def seed():
                         "id": "sec_safety",
                         "title": "Safety & Availability",
                         "fields": [
-                            {"id": "safety_shoes", "type": "select", "label": "Are you ready to purchase safety shoes costing approximately ₹200 to ₹400 for your own safety, if required?", "required": True, "width": "full", "options": ["Yes", "No", "Already Have"]},
+                            {"id": "safety_shoes", "type": "select", "label": "Are you ready to purchase safety shoes costing approximately Rs.200 to Rs.400 for your own safety, if required?", "required": True, "width": "full", "options": ["Yes", "No", "Already Have"]},
                             {"id": "availability", "type": "select", "label": "Are you available for the complete activity period mentioned above?", "required": True, "width": "full", "options": ["Yes", "No"]}
                         ]
                     },
@@ -117,26 +143,26 @@ def seed():
             }
 
             activity = Activity(
-                name="PIV Test Activity",
-                client="Test Client",
+                name="Primary Recruitment Drive 2026",
+                client="Industrial Client Ltd.",
                 location="Nashik",
-                start_date=date(2026, 1, 10),
-                end_date=date(2026, 10, 10),
-                required_participants=50,
+                start_date=date(2026, 9, 23),
+                end_date=date(2026, 9, 30),
+                required_participants=40,
                 maximum_registrations=200,
                 registration_opening_date=date.today(),
-                registration_closing_date=date(2026, 1, 5),
+                registration_closing_date=date(2026, 9, 20),
                 minimum_age=18,
                 safety_shoes_required=True,
                 introductory_paragraph=(
-                    "Welcome to the Physical Inventory Verification registration process.\n"
+                    "Welcome to the Primary Recruitment Drive registration process.\n\n"
                     "Please fill all information carefully and correctly."
                 ),
                 status="Registration Open",
                 form_schema=form_schema,
             )
             db.add(activity)
-            print("  Created demo activity: PIV Test Activity")
+            print("  Created demo activity: Primary Recruitment Drive 2026")
         else:
             print("  Activity already exists.")
 
@@ -150,6 +176,7 @@ def seed():
 
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed()

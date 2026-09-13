@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, Text, Enum, JSON
+from sqlalchemy import Column, Integer, String, Date, Boolean, Text, JSON
+from sqlalchemy.orm import relationship
 from app.config.database import Base
 import enum
+
 
 class ActivityStatus(str, enum.Enum):
     DRAFT = "Draft"
@@ -8,6 +10,7 @@ class ActivityStatus(str, enum.Enum):
     REGISTRATION_CLOSED = "Registration Closed"
     INTERVIEW = "Interview"
     COMPLETED = "Completed"
+
 
 class Activity(Base):
     __tablename__ = "activities"
@@ -27,3 +30,6 @@ class Activity(Base):
     introductory_paragraph = Column(Text, nullable=True)
     status = Column(String, default=ActivityStatus.DRAFT.value)
     form_schema = Column(JSON, nullable=True)
+
+    # Relationships
+    participants = relationship("Participant", back_populates="activity")
