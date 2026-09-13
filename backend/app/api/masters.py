@@ -184,8 +184,12 @@ def update_user(
     if data.name is not None:
         user.name = data.name
     if data.role is not None:
+        if user.user_id == "superadmin" and data.role != "super_admin":
+            raise HTTPException(status_code=400, detail="Cannot change the role of the main superadmin account.")
         user.role = data.role
     if data.is_active is not None:
+        if user.user_id == "superadmin" and data.is_active is False:
+            raise HTTPException(status_code=400, detail="Cannot deactivate the main superadmin account.")
         user.is_active = data.is_active
     if data.password is not None:
         user.password_hash = get_password_hash(data.password)
