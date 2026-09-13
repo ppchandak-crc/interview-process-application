@@ -86,8 +86,12 @@ const RegistrationForm = () => {
         }
       }
 
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${API_URL}/participants/register`, {
+      const apiBase = import.meta.env.VITE_API_URL
+        ? import.meta.env.VITE_API_URL.replace(/\/+$/, '')
+        : window.location.hostname.includes('vercel.app')
+          ? 'https://interview-process-application.onrender.com'
+          : 'http://localhost:8000';
+      const response = await fetch(`${apiBase}/participants/register`, {
         method: 'POST',
         body: formData,
       });

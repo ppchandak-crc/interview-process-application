@@ -1,8 +1,18 @@
 import axios from 'axios';
 import type { Activity, ActivityCreate } from '../types/activity';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_URL = rawApiUrl.replace(/\/+$/, '');
+function getApiUrl(): string {
+  // If VITE_API_URL is set (from .env or Vercel dashboard), use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  }
+  // Runtime detection: if we're on vercel.app, point to Render backend
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://interview-process-application.onrender.com';
+  }
+  return 'http://localhost:8000';
+}
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
