@@ -4,7 +4,7 @@ pydantic
 pydantic-settings
 sqlalchemy
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt
 python-multipart
 google-api-python-client
 google-auth-httplib2
